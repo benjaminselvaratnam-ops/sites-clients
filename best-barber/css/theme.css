@@ -1,0 +1,7 @@
+:root { --bg:#0d0e10; --surface:#15171a; --line:#2a2d33; --ink:#f2f2ef; --muted:#a3a7ae; --accent:#3d6be0; --accent-ink:#ffffff;
+  --display:"Archivo", ui-sans-serif, system-ui, sans-serif; --mono:"JetBrains Mono", ui-monospace, monospace; --r:6px; --btn-r:6px;
+  --scrim:rgb(8 9 11 / .9); --film-bg:#08090b; }
+.ss__title, .h2, .score__num, .foot__word { font-stretch: 112%; text-transform: uppercase; }
+.ss__title { letter-spacing: -.02em; }
+.h2 { letter-spacing: -.01em; }
+.logo b { font-stretch: 110%; }

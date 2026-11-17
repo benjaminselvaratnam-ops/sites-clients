@@ -1,0 +1,5 @@
+:root { --bg:#f3ece3; --surface:#ebe1d5; --line:#d9cbbb; --ink:#2a1a12; --muted:#6e5a4c; --accent:#b64e2b; --accent-ink:#fff8f2;
+  --display:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; --mono:"DM Mono", ui-monospace, monospace; --r:22px;
+  --scrim:rgb(42 20 10 / .78); --film-bg:#3a1c10; --film-ink:#fff8f2; --film-accent:#ffd9c2; }
+.ss__title { font-variation-settings: "opsz" 96; }
+.cell--map { color:#fff; }

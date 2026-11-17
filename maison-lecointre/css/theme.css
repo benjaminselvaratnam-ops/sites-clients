@@ -1,0 +1,4 @@
+:root { --bg:#12203a; --surface:#182945; --line:#2b3d5d; --ink:#f6efe2; --muted:#b4bccb; --accent:#d2464f; --accent-ink:#fff6f0;
+  --display:"Sora", ui-sans-serif, system-ui, sans-serif; --mono:"IBM Plex Mono", ui-monospace, monospace; --r:18px;
+  --scrim:rgb(10 18 34 / .86); --film-bg:#0c1628; --film-accent:#f2c879; }
+.form input, .form select, .form textarea { background:#0f1b31; }
