@@ -1,6 +1,6 @@
 /* Best Barber : mise en page. Couleurs et police dans theme.css. */
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5rem; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 5.5rem; }
 html, body { margin: 0; background: var(--bg); }
 body { color: var(--ink); font: 400 1rem/1.6 var(--display); -webkit-font-smoothing: antialiased; }
 img { display: block; max-width: 100%; }
@@ -14,11 +14,12 @@ a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); ou
 }
 
 /* En-tête */
-.hdr { position: fixed; z-index: 40; inset: 0 0 auto 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 4.25rem; padding: 0 clamp(1rem, 4vw, 3.5rem); transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
+.hdr { position: fixed; z-index: 40; inset: 0 0 auto 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 4.75rem; padding: 0 clamp(1rem, 4vw, 3.5rem); transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
 .hdr.is-solid { background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-color: var(--line); }
 .logo { display: inline-flex; align-items: center; gap: .6rem; min-height: 2.75rem; text-decoration: none; color: var(--ink); }
-.logo svg { width: 1.6rem; height: 1.6rem; color: var(--accent); }
-.logo b { font: 800 1rem/1 var(--display); letter-spacing: .16em; }
+/* Logo officiel du salon (blanc sur fond transparent, assets/logo.webp) */
+.logo__img { display: block; width: auto; height: 3.7rem; }
+.logo--plain .logo__img { height: 7rem; }
 .hdr__right { display: flex; align-items: center; gap: 1.25rem; }
 .hdr__status, .status { display: inline-flex; align-items: center; gap: .55rem; color: var(--muted); }
 .hdr__status { font: 500 .82rem var(--display); }
@@ -253,11 +254,11 @@ a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); ou
 
 /* ---------- Téléphone et petite tablette ---------- */
 @media (max-width: 860px) {
-  html { scroll-padding-top: 4rem; }
+  html { scroll-padding-top: 4.4rem; }
   body { padding-bottom: calc(4.6rem + env(safe-area-inset-bottom)); }
-  .hdr { height: 3.75rem; }
+  .hdr { height: 4.1rem; }
   .hdr__nav { display: none; }
-  .logo b { font-size: .92rem; }
+  .logo__img { height: 3.25rem; }
 
   /* Moins de boutons sur téléphone : une seule action principale à l'écran à la fois.
      En-tête = logo seul. Intro = « Réserver » seul. La barre du bas prend le relais
