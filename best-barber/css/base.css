@@ -157,7 +157,7 @@ a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); ou
   .hdr__status, .hdr__cta { display: none; }
   .logo b { font-size: .92rem; }
 
-  .ss__pin, .ss__chapter[data-align="right"] .ss__pin { align-items: flex-end; justify-content: flex-start; padding: 5rem 1.25rem 2.5rem; }
+  .ss__pin, .ss__chapter[data-align="right"] .ss__pin { align-items: flex-end; justify-content: flex-start; padding: 5rem 1.25rem calc(6rem + env(safe-area-inset-bottom)); }
   .ss__copy { width: 100%; }
   .ss__copy::before { inset: -4rem -1.25rem -3rem; background: linear-gradient(to top, var(--scrim) 0%, color-mix(in srgb, var(--scrim) 75%, transparent) 55%, transparent 100%); }
   .ss__title { font-size: clamp(2.2rem, 10vw, 3.4rem); }
