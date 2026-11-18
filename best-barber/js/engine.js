@@ -44,10 +44,10 @@
       layer.className = "ss__layer" + (i === 0 ? " is-active" : "");
       var poster = document.createElement("img");
       poster.alt = "";
-      poster.src = "assets/world/scene-0" + n + "-poster.jpg";
+      poster.src = "assets/world/scene-0" + n + "-poster.jpg?v=hd1";
       layer.appendChild(poster);
       media.appendChild(layer);
-      layers.push({ el: layer, ch: ch, src: "assets/world/scene-0" + n + ".mp4", video: null, target: 0 });
+      layers.push({ el: layer, ch: ch, src: "assets/world/scene-0" + n + ".mp4?v=hd1", video: null, target: 0 });
     });
 
     var seek = function (l) {
