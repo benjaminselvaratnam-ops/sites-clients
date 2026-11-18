@@ -230,7 +230,7 @@
       var ok = true;
       ["name", "tel"].forEach(function (n) { var i = form.elements[n]; var bad = !i.value.trim() || (n === "tel" && i.value.replace(/\D/g, "").length < 9); i.classList.toggle("is-bad", bad); if (bad) ok = false; });
       if (!ok) return;
-      form.querySelector("[data-done]").textContent = "Merci " + form.elements.name.value.trim() + " ! Votre " + st.service[0].toLowerCase() + " est demandée pour " + label(st.day) + " à " + fmt(st.time) + ". Le salon vous confirme par SMS.";
+      form.querySelector("[data-done]").textContent = "Merci " + form.elements.name.value.trim() + " ! Votre " + st.service[0].toLowerCase() + " est demandée pour " + label(st.day) + " à " + fmt(st.time) + ". Le salon vous recontacte pour confirmer.";
       go(4);
     });
     form.querySelector("[data-restart]").addEventListener("click", function () { form.reset(); st = { service: null, barber: null, day: null, time: null }; go(0); });
