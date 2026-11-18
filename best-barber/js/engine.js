@@ -242,4 +242,24 @@
       });
     });
   }
+
+  /* ---------- Barre du bas (téléphone) : cachée pendant l'intro et pendant la réservation ---------- */
+  var dock = document.querySelector(".dock");
+  if (dock && phone) {
+    var intro = document.getElementById("top");
+    var booking = document.getElementById("reserver");
+    var updateDock = function () {
+      var vh = window.innerHeight;
+      // Intro encore visible sur plus d'un tiers de l'écran : son bouton « Réserver » suffit.
+      var inIntro = intro && intro.getBoundingClientRect().bottom > vh * 0.35;
+      // Formulaire de réservation au milieu de l'écran : on laisse la place au formulaire.
+      var b = booking && booking.getBoundingClientRect();
+      var inBooking = b && b.top < vh * 0.5 && b.bottom > vh * 0.5;
+      dock.classList.toggle("is-hidden", !!(inIntro || inBooking));
+    };
+    // Deux mesures légères par événement : pas besoin de requestAnimationFrame.
+    window.addEventListener("scroll", updateDock, { passive: true });
+    window.addEventListener("resize", updateDock);
+    updateDock();
+  }
 })();
