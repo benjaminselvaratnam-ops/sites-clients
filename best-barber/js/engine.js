@@ -1,5 +1,5 @@
 // Moteur commun : film piloté par le scroll (vidéo sur ordinateur, suite d'images sur téléphone),
-// apparitions, bouton magnétique, cartes 3D, galerie à glisser, badge ouvert/fermé.
+// apparitions, galerie à glisser, badge ouvert/fermé.
 // Réglages par site dans window.SITE = { frames, ranges, hours }.
 (function () {
   "use strict";
@@ -97,8 +97,8 @@
         v.addEventListener("seeked", function () { seek(l); });
       }).catch(function () { l.video = null; });
     };
-    layers.forEach(function (l, i) { if (i < 2) loadVideo(l); });
-    window.addEventListener("load", function () { layers.forEach(loadVideo); });
+    // On ne charge que le chapitre en cours et le suivant, au fil du défilement.
+    var preload = function (i) { [i, i + 1].forEach(function (k) { if (layers[k]) loadVideo(layers[k]); }); };
 
     var active = -1;
     var onScroll = function () {
@@ -119,6 +119,7 @@
       if (idx !== active) {
         layers.forEach(function (l, i) { l.el.classList.toggle("is-active", i === idx); });
         active = idx;
+        preload(idx);
       }
       seek(layers[idx]);
     };
@@ -140,30 +141,7 @@
     document.querySelectorAll(".rise").forEach(function (el) { el.classList.add("is-in"); });
   }
 
-  /* ---------- 3. Boutons magnétiques ---------- */
-  if (!reduced && !mobile) {
-    document.querySelectorAll(".magnetic").forEach(function (el) {
-      el.addEventListener("pointermove", function (e) {
-        var r = el.getBoundingClientRect();
-        el.style.transform = "translate(" + (e.clientX - r.left - r.width / 2) * 0.28 + "px," + (e.clientY - r.top - r.height / 2) * 0.38 + "px)";
-      });
-      el.addEventListener("pointerleave", function () { el.style.transform = ""; });
-    });
-  }
-
-  /* ---------- 4. Cartes 3D + galerie à glisser ---------- */
-  if (!reduced && !mobile) {
-    document.querySelectorAll(".tilt").forEach(function (c) {
-      c.addEventListener("pointermove", function (e) {
-        var r = c.getBoundingClientRect();
-        var x = (e.clientX - r.left) / r.width - 0.5, yy = (e.clientY - r.top) / r.height - 0.5;
-        c.style.transform = "perspective(900px) rotateY(" + x * 12 + "deg) rotateX(" + -yy * 12 + "deg) scale(1.03)";
-        c.style.setProperty("--gx", (x + 0.5) * 100 + "%");
-        c.style.setProperty("--gy", (yy + 0.5) * 100 + "%");
-      });
-      c.addEventListener("pointerleave", function () { c.style.transform = ""; });
-    });
-  }
+  /* ---------- 3. Galerie à glisser à la souris ---------- */
   document.querySelectorAll(".track").forEach(function (track) {
     var down = false, sx = 0, sl = 0;
     track.addEventListener("pointerdown", function (e) {
@@ -174,7 +152,7 @@
     window.addEventListener("pointerup", function () { down = false; track.classList.remove("is-drag"); });
   });
 
-  /* ---------- 5. Ouvert / fermé, heure de Lausanne ---------- */
+  /* ---------- 4. Ouvert / fermé, heure de Lausanne ---------- */
   var H = S.hours;
   var DAYS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
   var fmt = function (m) { return Math.floor(m / 60) + "h" + (m % 60 ? String(m % 60).padStart(2, "0") : ""); };
