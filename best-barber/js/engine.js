@@ -8,18 +8,103 @@
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var mobile = window.matchMedia("(hover: none) and (pointer: coarse), (max-width: 860px)").matches;
 
-  /* ---------- 1. Intro : vidéo en boucle si possible, sinon image ---------- */
-  var vid = document.querySelector(".hero__vid");
-  var saveData = navigator.connection && navigator.connection.saveData;
-  if (vid && !reduced && !saveData) {
-    vid.addEventListener("playing", function () { vid.classList.add("is-playing"); }, { once: true });
-    setTimeout(function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); }, 900);
-  } else if (vid) { vid.remove(); }
+  /* ---------- 1. Intro : film au scroll sur ordinateur, film en lecture auto sur téléphone ---------- */
+  var phone = window.matchMedia("(max-width: 860px), (hover: none) and (pointer: coarse)").matches;
+  var killed = document.getElementById(phone ? "journey" : "top");
+  if (killed) killed.remove();
+
+  if (phone) {
+    var vid = document.querySelector(".hero__vid");
+    var saveData = navigator.connection && navigator.connection.saveData;
+    if (vid && !reduced && !saveData) {
+      vid.src = vid.getAttribute("data-src");
+      vid.addEventListener("playing", function () { vid.classList.add("is-playing"); }, { once: true });
+      var tryPlay = function () { var p = vid.play(); if (p && p.catch) p.catch(function () {}); };
+      tryPlay();
+      // iOS en mode économie d'énergie bloque l'autoplay : on relance au premier toucher.
+      window.addEventListener("touchstart", tryPlay, { once: true, passive: true });
+      // On met la vidéo en pause quand l'intro n'est plus visible (batterie, fluidité du scroll).
+      if ("IntersectionObserver" in window) new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) tryPlay(); else vid.pause(); }); }).observe(vid);
+    } else if (vid) { vid.remove(); }
+  }
+
+  /* ---------- 1. Film piloté par le scroll ---------- */
+  var root = document.getElementById("journey");
+  if (root && !phone) {
+    var media = root.querySelector(".ss__media");
+    var bar = root.querySelector(".ss__progress span");
+    var chapters = Array.prototype.slice.call(root.querySelectorAll(".ss__chapter"));
+    var layers = [];
+    var canvasMode = false;
+
+    chapters.forEach(function (ch, i) {
+      var n = ch.getAttribute("data-clip");
+      ch.style.minHeight = parseFloat(ch.getAttribute("data-scroll") || "1.4") * 100 + "dvh";
+      var layer = document.createElement("figure");
+      layer.className = "ss__layer" + (i === 0 ? " is-active" : "");
+      var poster = document.createElement("img");
+      poster.alt = "";
+      poster.src = "assets/world/scene-0" + n + "-poster.jpg";
+      layer.appendChild(poster);
+      media.appendChild(layer);
+      layers.push({ el: layer, ch: ch, src: "assets/world/scene-0" + n + ".mp4", video: null, target: 0 });
+    });
+
+    var seek = function (l) {
+      var v = l.video;
+      if (!v || !v.duration || v.seeking) return;
+      var t = l.target * (v.duration - 0.05);
+      if (Math.abs(v.currentTime - t) > 0.01) v.currentTime = t;
+    };
+    var loadVideo = function (l) {
+      if (l.video || reduced || canvasMode) return;
+      var v = document.createElement("video");
+      v.muted = true; v.playsInline = true; v.preload = "auto";
+      v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+      l.video = v;
+      fetch(l.src).then(function (r) { return r.blob(); }).then(function (b) {
+        v.src = URL.createObjectURL(b);
+        v.addEventListener("loadeddata", function () { l.el.appendChild(v); seek(l); }, { once: true });
+        v.addEventListener("seeked", function () { seek(l); });
+      }).catch(function () { l.video = null; });
+    };
+    // On ne charge que le chapitre en cours et le suivant, au fil du défilement.
+    var preload = function (i) { [i, i + 1].forEach(function (k) { if (layers[k]) loadVideo(layers[k]); }); };
+
+    var active = -1;
+    var onScroll = function () {
+      var y = window.scrollY, vh = window.innerHeight;
+      var top = root.getBoundingClientRect().top + y;
+      bar.style.transform = "scaleX(" + Math.min(1, Math.max(0, (y - top) / (root.offsetHeight - vh))) + ")";
+      var idx = 0;
+      layers.forEach(function (l, i) {
+        var start = top + l.ch.offsetTop;
+        var len = Math.max(1, l.ch.offsetHeight - (i === layers.length - 1 ? vh : 0));
+        var p = Math.min(1, Math.max(0, (y - start) / len));
+        l.target = p;
+        if (y >= start - 1) {
+          idx = i;
+        }
+      });
+      if (idx !== active) {
+        layers.forEach(function (l, i) { l.el.classList.toggle("is-active", i === idx); });
+        active = idx;
+        preload(idx);
+      }
+      seek(layers[idx]);
+    };
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; onScroll(); }); }
+    }, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+  }
 
   /* ---------- En-tête opaque après l'intro ---------- */
   var hdr = document.querySelector(".hdr");
   if (hdr) {
-    var solid = function () { hdr.classList.toggle("is-solid", window.scrollY > window.innerHeight * 0.7); };
+    var solid = function () { hdr.classList.toggle("is-solid", window.scrollY > (document.getElementById("journey") ? document.getElementById("journey").offsetHeight - 80 : window.innerHeight * 0.7)); };
     window.addEventListener("scroll", solid, { passive: true });
     solid();
   }
@@ -95,11 +180,11 @@
   };
   var label = function (o) { return o.k === 0 ? "aujourd'hui" : o.k === 1 ? "demain" : DAYS[o.date.getDay()] + " " + o.date.getDate() + " " + MONTHS[o.date.getMonth()]; };
 
-  var next = document.querySelector("[data-next] b");
-  if (next) {
+  var nexts = document.querySelectorAll("[data-next] b, [data-next2] b");
+  if (nexts.length) {
     var found = null;
     openDays(3).some(function (o) { return o.slots.some(function (m) { if (!busy(o.key, m, "any")) { found = label(o) + " à " + fmt(m); return true; } }); });
-    next.textContent = found || "demain";
+    nexts.forEach(function (n) { n.textContent = found || "demain"; });
   }
   var row = document.querySelector('[data-hours] [data-day="' + zurichNow().d.getDay() + '"]');
   if (row) row.classList.add("is-today");
