@@ -5,4 +5,4 @@
   --r: 4px; --btn-r: 4px;
   --scrim: rgb(8 8 9 / .88); --film-bg: #08090b;
 }
-.ss__title, .h2, .logo b { font-stretch: 115%; text-transform: uppercase; }
+.h2, .logo b { font-stretch: 115%; text-transform: uppercase; }
