@@ -4,9 +4,11 @@
 (function () {
   "use strict";
   var S = window.SITE || {};
+  var ver = S.v ? "?v=" + S.v : ""; // change S.v pour forcer le rechargement des images
   document.documentElement.classList.add("js");
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var mobile = window.matchMedia("(hover: none) and (pointer: coarse), (max-width: 860px)").matches;
+  // Images verticales 4:5 sur téléphone (même seuil que le CSS mobile), vidéo au-delà.
+  var mobile = window.matchMedia("(max-width: 860px)").matches;
 
   /* ---------- 1. Film piloté par le scroll ---------- */
   var root = document.getElementById("journey");
@@ -25,7 +27,7 @@
       layer.className = "ss__layer" + (i === 0 ? " is-active" : "");
       var poster = document.createElement("img");
       poster.alt = "";
-      poster.src = "assets/world/scene-0" + n + (mobile ? "-mobile" : "") + "-poster.jpg";
+      poster.src = "assets/world/scene-0" + n + (mobile ? "-mobile" : "") + "-poster.jpg" + ver;
       layer.appendChild(poster);
       media.appendChild(layer);
       layers.push({ el: layer, ch: ch, src: "assets/world/scene-0" + n + ".mp4", video: null, target: 0 });
@@ -43,7 +45,7 @@
         var img = new Image();
         img.decoding = "async";
         img.onload = function () { img.ready = true; drawn = -1; };
-        img.src = "assets/frames/f" + String(i + 1).padStart(3, "0") + ".webp";
+        img.src = "assets/frames/f" + String(i + 1).padStart(3, "0") + ".webp" + ver;
         frames[i] = img;
       };
       for (var s = 0; s < S.frames; s += 8) load(s);
