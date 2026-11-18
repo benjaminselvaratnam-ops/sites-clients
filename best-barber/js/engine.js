@@ -131,6 +131,18 @@
     onScroll();
   }
 
+  /* ---------- En-tête opaque une fois le film passé ---------- */
+  var hdr = document.querySelector(".hdr");
+  if (hdr) {
+    var film = document.getElementById("journey");
+    var solid = function () {
+      var limit = film ? film.offsetTop + film.offsetHeight - hdr.offsetHeight : 40;
+      hdr.classList.toggle("is-solid", window.scrollY > limit);
+    };
+    window.addEventListener("scroll", solid, { passive: true });
+    solid();
+  }
+
   /* ---------- 2. Apparitions (transform uniquement, rien n'est caché) ---------- */
   if (!reduced && "IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (es) {
